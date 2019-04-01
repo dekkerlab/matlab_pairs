@@ -69,11 +69,24 @@ groupsummary(table,{'str1','str2'})
 % we could group table by strands and plot
 % 4 different scatters ... - should not be much difference ...
 
-G=findgroups(table,{'str1','str2'});
 G=findgroups(table.str1,table.str2});
 % do something like that to extract groups ...
-table(G==1)
-table.sep(G==1)
+
+file1 = horzcat(table.pos1(G==1),table.pos2(G==1))
+file2 = horzcat(table.pos1(G==2),table.pos2(G==2))
+file3 = horzcat(table.pos1(G==2),table.pos2(G==2))
+file4 = horzcat(table.pos1(G==2),table.pos2(G==2))
+
+% will have all 4 plots in one
+subplot(2,2,1)
+scatter(table.pos1(G==1),table.pos2(G==1),0.5,'red')
+subplot(2,2,2)
+scatter(table.pos1(G==2),table.pos2(G==2),0.5,'blue')
+subplot(2,2,3)
+scatter(table.pos1(G==3),table.pos2(G==3),0.5,'magenta')
+subplot(2,2,4)
+scatter(table.pos1(G==4),table.pos2(G==4),0.5,'green')
+
 % i think G -> 1,2,3,4 shoudl correspond to whatever was in
 % groupsummary - but we need to check that.
 
@@ -95,6 +108,35 @@ table.sep(G==1)
 % go to binning - decide if it's homework or not
 % anyways introduce neccessary tools/functions
 % show it briefly ...
+% discretize function returns the indicies of the bin. 
+chromlen =round(max(max(table.pos1),max(table.pos2)),-3)
+binsize=1000;
+bins=0:binsize:chromlen;
+
+file1_binned = horzcat(transpose(bins(discretize(file1(:,1),bins))),transpose(bins(discretize(file1(:,2),bins))));
+file2_binned = horzcat(transpose(bins(discretize(file2(:,1),bins))),transpose(bins(discretize(file2(:,2),bins))));
+file3_binned = horzcat(transpose(bins(discretize(file3(:,1),bins))),transpose(bins(discretize(file3(:,2),bins))));
+file4_binned = horzcat(transpose(bins(discretize(file4(:,1),bins))),transpose(bins(discretize(file4(:,2),bins))));
+
+% these are the sep for individula files
+file1_sep=file1_bin(:,2)-file1_bin(:,1);
+file2_sep=file2_bin(:,2)-file2_bin(:,1);
+file3_sep=file3_bin(:,2)-file3_bin(:,1);
+file4_sep=file4_bin(:,2)-file4_bin(:,1);
+
+% are we doinf this part or no?
+hold on;
+[n, xout] = hist(file1_sep);
+plot(xout, n,'red');
+hold on;
+[n, xout] = hist(file2_sep);
+plot(xout, n,'blue');
+hold on;
+[n, xout] = hist(file3_sep);
+plot(xout, n,'magenta');
+hold on;
+[n, xout] = hist(file4_sep);
+plot(xout, n,'green');
 
 % define bins ..., e.g., bins=0:binsize:chromlen
 % use "discretize" with pre-set bins on pos1 pos2 ...
