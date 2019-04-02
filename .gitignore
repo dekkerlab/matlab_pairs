@@ -1,0 +1,7 @@
+# octave related
+octave-workspace
+
+#osx related - just in case
+.DS_Store
+.AppleDouble
+.LSOverride
