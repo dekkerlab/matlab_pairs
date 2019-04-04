@@ -35,6 +35,7 @@ table.pos1(1:10)
 % what can learn from this data ? ...
 % let's just look at it !
 scatter(table.pos2,table.pos1,0.8,'red','filled')
+pbaspect([1 1 1])
 xlabel("pos2, bp")
 ylabel("pos1, bp")
 title("Hi-C interactions for chrom 19")
@@ -43,6 +44,9 @@ title("Hi-C interactions for chrom 19")
 % scatter(table.pos1,table.pos2,0.8,'blue','filled')
 
 % what does this scatter-plot tells us ?
+
+% can you guys, tall us what is the relationship between
+% pos1 and pos2 ?
 
 % where are the pairs/interactions that
 % have the same genomic separation ?
@@ -138,7 +142,7 @@ sum(abs(table_pm.pos2-table_pm.pos1)>1000 & abs(table_pm.pos2-table_pm.pos1)<100
 
 
 % do some querying to find out where the difference is !
-% maybe do a hist of a short rand of pairs ...
+% maybe do a hist of a short range of pairs if we have time ...
 
 % group, extract groups and do 4 "scalings"-counts-distributions ...
 % there must be a difference in short-range interactions
@@ -168,11 +172,27 @@ sum(abs(table_pm.pos2-table_pm.pos1)>1000 & abs(table_pm.pos2-table_pm.pos1)<100
 % they woudl turn into 'bin1' 'bin2'
 % then initialize empty/zero matrix of num_bins*num_bins
 % loop though pairs and increment mat(bin1,bin2) += 1
-chromlen =round(max(max(table.pos1),max(table.pos2)),-3)
+chromlen = round(max(max(table.pos1),max(table.pos2)),-3)
 binsize=1000;
 bins=0:binsize:chromlen;
 
-file1_binned = horzcat(transpose(bins(discretize(file1(:,1),bins))),transpose(bins(discretize(file1(:,2),bins))));
+%show a pos2, pos1 scatter again and do a grid on, grid minor
+% make sure grid is nicely visible
+% discuss what would binning give us on top of the scatter ...
+%we really want to estimate the contact frequency, which scatter plot
+% nicely demonstrates, but it is not "that thing" yet ...
+
+% concept of a contact frequency - how often does chr:1M-2M and chr:5M-6M
+% in comparison with following 2 loci: chr:1M-2M and chr:2M-3M .
+
+%todo - deal with scatter/grid etc
+% draft a better binning code - and maybe keep some public, while other
+% stuff "hidden" to make it a homework
+
+discretize(table_pp(:,'pos1'),bins)
+
+
+file1_binned = horzcat(transpose(bins()),transpose(bins(discretize(file1(:,2),bins))));
 file2_binned = horzcat(transpose(bins(discretize(file2(:,1),bins))),transpose(bins(discretize(file2(:,2),bins))));
 file3_binned = horzcat(transpose(bins(discretize(file3(:,1),bins))),transpose(bins(discretize(file3(:,2),bins))));
 file4_binned = horzcat(transpose(bins(discretize(file4(:,1),bins))),transpose(bins(discretize(file4(:,2),bins))));
