@@ -172,9 +172,19 @@ sum(abs(table_pm.pos2-table_pm.pos1)>1000 & abs(table_pm.pos2-table_pm.pos1)<100
 % they woudl turn into 'bin1' 'bin2'
 % then initialize empty/zero matrix of num_bins*num_bins
 % loop though pairs and increment mat(bin1,bin2) += 1
-chromlen = round(max(max(table.pos1),max(table.pos2)),-3)
-binsize=1000;
+chromlen = round(max(max(table.pos1),max(table.pos2)),-3);
+binsize=10000;
 bins=0:binsize:chromlen;
+
+discretize(table.pos1,bins);
+bins(discretize(table.pos1,bins));
+transpose(bins(discretize(table.pos1,bins)));
+
+binned_pos1= transpose(bins(discretize(table.pos1,bins)));
+binned_pos2= transpose(bins(discretize(table.pos2,bins)));
+
+table_binned = addvars(table,binned_pos1,'After','pos1');
+table_binned = addvars(table_binned,binned_pos2,'After','pos2');
 
 %show a pos2, pos1 scatter again and do a grid on, grid minor
 % make sure grid is nicely visible
@@ -189,35 +199,37 @@ bins=0:binsize:chromlen;
 % draft a better binning code - and maybe keep some public, while other
 % stuff "hidden" to make it a homework
 
-discretize(table_pp(:,'pos1'),bins)
 
-
-file1_binned = horzcat(transpose(bins()),transpose(bins(discretize(file1(:,2),bins))));
-file2_binned = horzcat(transpose(bins(discretize(file2(:,1),bins))),transpose(bins(discretize(file2(:,2),bins))));
-file3_binned = horzcat(transpose(bins(discretize(file3(:,1),bins))),transpose(bins(discretize(file3(:,2),bins))));
-file4_binned = horzcat(transpose(bins(discretize(file4(:,1),bins))),transpose(bins(discretize(file4(:,2),bins))));
-
-% these are the sep for individula files
-file1_sep=file1_binned(:,2)-file1_binned(:,1);
-file2_sep=file2_binned(:,2)-file2_binned(:,1);
-file3_sep=file3_binned(:,2)-file3_binned(:,1);
-file4_sep=file4_binned(:,2)-file4_binned(:,1);
-
-% are we doinf this part or no?
-hold on;
-[n, xout] = hist(file1_sep);
-plot(xout, n,'red');
-hold on;
-[n, xout] = hist(file2_sep);
-plot(xout, n,'blue');
-hold on;
-[n, xout] = hist(file3_sep);
-plot(xout, n,'magenta');
-hold on;
-[n, xout] = hist(file4_sep);
-plot(xout, n,'green');
 
 % % RETIRED CODE
+
+% discretize(table_pp(:,'pos1'),bins)
+
+
+% file1_binned = horzcat(transpose(bins()),transpose(bins(discretize(file1(:,2),bins))));
+% file2_binned = horzcat(transpose(bins(discretize(file2(:,1),bins))),transpose(bins(discretize(file2(:,2),bins))));
+% file3_binned = horzcat(transpose(bins(discretize(file3(:,1),bins))),transpose(bins(discretize(file3(:,2),bins))));
+% file4_binned = horzcat(transpose(bins(discretize(file4(:,1),bins))),transpose(bins(discretize(file4(:,2),bins))));
+
+% these are the sep for individula files
+% file1_sep=file1_binned(:,2)-file1_binned(:,1);
+% file2_sep=file2_binned(:,2)-file2_binned(:,1);
+% file3_sep=file3_binned(:,2)-file3_binned(:,1);
+% file4_sep=file4_binned(:,2)-file4_binned(:,1);
+
+% are we doinf this part or no?
+% hold on;
+% [n, xout] = hist(file1_sep);
+% plot(xout, n,'red');
+% hold on;
+% [n, xout] = hist(file2_sep);
+% plot(xout, n,'blue');
+% hold on;
+% [n, xout] = hist(file3_sep);
+% plot(xout, n,'magenta');
+% hold on;
+% [n, xout] = hist(file4_sep);
+% plot(xout, n,'green');
 
 % % let's just look at the overall distribution
 % % of interactions with genomic separation
