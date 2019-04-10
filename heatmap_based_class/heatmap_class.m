@@ -63,44 +63,64 @@ for row=1:height(table)
 end
 
 % display a heatmap of the matrix
-m  = heatmap(heatmap_mat,'Colormap',autumn,'ColorScaling','log','ColorLimits',[-5 3])
+m  = heatmap(heatmap_mat,'Colormap',flip(autumn),'ColorScaling','log','ColorLimits',[-1 5])
 m.GridVisible = 0
 
 
 % Draft for tomorrow
 
 % scaling plot
+% distance decay of the contact probability
 
 [nrows, ncols] = size(heatmap_mat);
 
 mean_list=[]
 for i = 1:nrows
+    % touch a bit upon what exactly "diag" does
+    % depending on the input mat,vec, no index ...
    mean_list=[mean_list,mean(diag(heatmap_mat,i-1))];
 end
-plot(log(1:nrows), log(mean_list) )
+
+% 1:nrows -> turn into basepairs *binsize
+plot(1:nrows, mean_list )
+plot(1:nrows, log(mean_list) )
+
+% loglog
 
 % Create the expected matrix by taking the means of the diahonals
 
+% retire this
 exp_matrix = zeros(ncols, ncols);
 for i = 1:nrows
-   m=mean(diag(heatmap_mat,i-1)); 
+%    m=mean(diag(heatmap_mat,i-1)); 
    meansvals=logical(diag(heatmap_mat,i-1)).*mean(diag(heatmap_mat,i-1));
    upper=diag(meansvals,i-1);
    lower=diag(meansvals,1-i);
    exp_matrix = exp_matrix + upper;
    exp_matrix = exp_matrix + lower;
 end
-h=heatmap( exp_matrix , 'Colormap',flip(autumn),'ColorScaling','log')
+
+% simple way to create an expected matrix
+% touch up on this toeplitz matrix concept
+exp_matrix = toeplitz(mean_list);
+
+h=heatmap(exp_matrix, 'Colormap',flip(autumn),'ColorScaling','log')
 h.GridVisible = 'off'
 
 % observed over expected ?
 observed_over_expected=heatmap_mat./exp_matrix;
-h=heatmap( observed_over_expected ,'Colormap',flip(autumn),'ColorScaling','log')
+h=heatmap( observed_over_expected ,'Colormap',jet,'ColorScaling','log')
 h.GridVisible = 'off'
 
-% clear of the NANs- not working properly - need a revisit!!
-correlation_matrix_pre = corr(observed_over_expected);
-h=heatmap(correlation_matrix_pre,  'Colormap', flip(autumn),'ColorScaling','log');
+
+
+% discuss Pearson correlation - linear regression
+% and what corr does here ...
+observed_over_expected(isnan(observed_over_expected)) = 0;
+correlation_matrix_pre = 1+corr(observed_over_expected);
+h = heatmap(correlation_matrix_pre,  'Colormap', jet,'ColorScaling','log');
+% imagesc(correlation_matrix_pre);
+% colorbar
 h.GridVisible = 'off'
  
 imshow(correlation_matrix_pre);
@@ -109,5 +129,4 @@ imshow(edge_image);
  
 edge_sums = sum(transpose(edge_image));
 plot(edge_sums);
-
 
