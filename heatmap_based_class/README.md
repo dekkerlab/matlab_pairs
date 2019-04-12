@@ -8,6 +8,16 @@ This one is mostly concerned with extracting "compartment"-level information fro
 ### Description
 Some description to be provided ...
 
+### todo:
+these are probably the gaps that we should fill in next time:
+ - why do we even need a distance decay plot
+     - robust to biases - do not need a lot of input data
+     - "universal" and reflects global aspect of chromatin organization (M vs G1, etc)
+     - ...
+ - better explaining the conecpt of expected - i.e. featureless Hi-C heatmap ...
+ - better way of extracting the checkerboard ?
+ - switch to imagesc ?!
+
 
 ### MatLab is "open"
  - "Parula" colormap turned out to be copyrighted
