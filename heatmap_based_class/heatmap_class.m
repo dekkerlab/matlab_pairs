@@ -59,7 +59,9 @@ for row=1:height(table)
 	% "put" a count in a corresponding "cell"
 	% of a heatmap:
 	heatmap_mat(i,j) = heatmap_mat(i,j) + 1;
-	heatmap_mat(j,i) = heatmap_mat(j,i) + 1;
+    if (i ~= j)
+        heatmap_mat(j,i) = heatmap_mat(j,i) + 1;
+    end
 end
 
 % display a heatmap of the matrix
@@ -96,15 +98,15 @@ heatmap_mat = readmatrix('hff_chr19_binned.txt')
 % what that should by equal to BTW ?
 
 % Create the expected matrix by taking the means of the diagonals
-mean_list=[]
-for i = 1:nrows
+mean_list=zeros(num_bins,1);
+for i = 1:num_bins
     % touch a bit upon what exactly "diag" does
     % depending on the input mat,vec, no index ...
-   mean_list=[ mean_list, mean(diag(heatmap_mat,i-1)) ];
+   mean_list(i) = mean(diag(heatmap_mat,i-1));
 end
 
 % 1:nrows -> turn into basepairs *binsize
-genomic_separations = (1:nrows)*binsize;
+genomic_separations = (1:num_bins)*binsize;
 
 % try plotting it - discuss short range, long range etc
 % hard to see stuff on a linear scale ...
@@ -125,8 +127,17 @@ h.GridVisible = 'off'
 % remove distance decay from the data ...
 observed_over_expected=heatmap_mat./exp_matrix;
 observed_over_expected(isnan(observed_over_expected)) = 0;
-h=heatmap( observed_over_expected ,'Colormap',flip(jet),'ColorScaling','log')
+h=heatmap( observed_over_expected ,'Colormap',flip(hot),'ColorScaling','log')
 h.GridVisible = 'off'
+
+% Create the expected matrix by taking the means of the diagonals
+mean_list2=zeros(num_bins,1);
+for i = 1:num_bins
+    % touch a bit upon what exactly "diag" does
+    % depending on the input mat,vec, no index ...
+   mean_list2(i) = mean(diag(observed_over_expected,i-1));
+end
+
 
 
 % discuss Pearson correlation - linear regression
@@ -141,6 +152,7 @@ imshow(correlation_matrix_pre);
 edge_image = edge(correlation_matrix_pre, 'canny');
 imshow(edge_image);
  
+% sum up the values along the rows to get boundaries
 edge_sums = sum(transpose(edge_image));
 plot(edge_sums);
 
