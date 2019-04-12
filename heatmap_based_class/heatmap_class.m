@@ -63,60 +63,74 @@ for row=1:height(table)
 end
 
 % display a heatmap of the matrix
-m  = heatmap(heatmap_mat,'Colormap',flip(autumn),'ColorScaling','log','ColorLimits',[-1 5])
+m  = heatmap(heatmap_mat,'Colormap',flip(hot),'ColorScaling','log','ColorLimits',[-1 5])
 m.GridVisible = 0
+% can also use imagesc function (there is also HeatMap ?!)
 
+% spend a minute , discussing log-scale and why it enables
+% better visibility of the data
 
-% Draft for tomorrow
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% save matrix - move on to new topic ...
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dlmwrite('hff_chr19_binned.txt',heatmap_mat)
+writematrix('hff_chr19_binned.txt',heatmap_mat)
+
+% we can read this matrix from file
+heatmap_mat = dlmread('hff_chr19_binned.txt')
+heatmap_mat = readmatrix('hff_chr19_binned.txt')
+
+% what are the most striking features of a Hi-C heatmap ?
+%  - distance decay
+%  - checkerboard 
+% discuss that ...
 
 % scaling plot
+% do you remember where on the heatmap
+% can we find pairs of loci separated by the same
+% genomic distance ?
+
 % distance decay of the contact probability
 
 [nrows, ncols] = size(heatmap_mat);
+% what that should by equal to BTW ?
 
+% Create the expected matrix by taking the means of the diagonals
 mean_list=[]
 for i = 1:nrows
     % touch a bit upon what exactly "diag" does
     % depending on the input mat,vec, no index ...
-   mean_list=[mean_list,mean(diag(heatmap_mat,i-1))];
+   mean_list=[ mean_list, mean(diag(heatmap_mat,i-1)) ];
 end
 
 % 1:nrows -> turn into basepairs *binsize
-plot(1:nrows, mean_list )
-plot(1:nrows, log(mean_list) )
+genomic_separations = (1:nrows)*binsize;
 
-% loglog
+% try plotting it - discuss short range, long range etc
+% hard to see stuff on a linear scale ...
+plot(genomic_separations, mean_list )
+plot(genomic_separations, log(mean_list) )
+% loglog ?
 
-% Create the expected matrix by taking the means of the diahonals
-
-% retire this
-exp_matrix = zeros(ncols, ncols);
-for i = 1:nrows
-%    m=mean(diag(heatmap_mat,i-1)); 
-   meansvals=logical(diag(heatmap_mat,i-1)).*mean(diag(heatmap_mat,i-1));
-   upper=diag(meansvals,i-1);
-   lower=diag(meansvals,1-i);
-   exp_matrix = exp_matrix + upper;
-   exp_matrix = exp_matrix + lower;
-end
-
+% let's heatmap our "expected"/scaling plot/interaction frequency distance
+% decay in 2D:
 % simple way to create an expected matrix
 % touch up on this toeplitz matrix concept
 exp_matrix = toeplitz(mean_list);
 
-h=heatmap(exp_matrix, 'Colormap',flip(autumn),'ColorScaling','log')
+h=heatmap(exp_matrix, 'Colormap',flip(hot),'ColorScaling','log')
 h.GridVisible = 'off'
 
 % observed over expected ?
+% remove distance decay from the data ...
 observed_over_expected=heatmap_mat./exp_matrix;
-h=heatmap( observed_over_expected ,'Colormap',jet,'ColorScaling','log')
+observed_over_expected(isnan(observed_over_expected)) = 0;
+h=heatmap( observed_over_expected ,'Colormap',flip(jet),'ColorScaling','log')
 h.GridVisible = 'off'
-
 
 
 % discuss Pearson correlation - linear regression
 % and what corr does here ...
-observed_over_expected(isnan(observed_over_expected)) = 0;
 correlation_matrix_pre = 1+corr(observed_over_expected);
 h = heatmap(correlation_matrix_pre,  'Colormap', jet,'ColorScaling','log');
 % imagesc(correlation_matrix_pre);
@@ -130,3 +144,13 @@ imshow(edge_image);
 edge_sums = sum(transpose(edge_image));
 plot(edge_sums);
 
+
+%%%%%%%%%%%%%%%%%%
+% discuss homework - fake Hi-C data ...
+%%%%%%%%%%%%%%%%%
+vvv = [1,1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,1,1,1,1,1,-1,-1,-1,-1,-1,-1]
+heatmap(transpose(vvv) * vvv)
+
+% multiply by distance decay etc ...
+
+% also could repeat what we've done but using other input data ...
