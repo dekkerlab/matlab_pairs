@@ -5,14 +5,9 @@ This is a continuation of the previous workshop that we did using pair-type of i
 
 This one is mostly concerned with extracting "compartment"-level information from Hi-C heatmaps.
 
-### todo:
- - dig through available scritps:
-      - keep essential
-      - throw out BS
-      - add illustrative examples that improve understanding
-      - "estimate" what could be done during 1.5 hours ...
-      - homework ?
-      - add a transition from a previous pairs-based workshop ...
+### Description
+Some description to be provided ...
+
 
 ### MatLab is "open"
  - "Parula" colormap turned out to be copyrighted
