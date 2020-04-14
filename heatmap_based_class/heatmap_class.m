@@ -1,3 +1,6 @@
+
+% START FROM PREVIOUS HOMEWORK - I.E. BINNING PAIRS INTO A CONTACT MAP
+
 % let's start with the previous homework
 % uploading it here is sort of "strange", but
 % if there are student who can browse the repository
@@ -7,7 +10,7 @@
 
 %  1.
 % read pairs from a text file as a table.
-filename = '../U54_HFF_plate_subset.txt';
+filename = '../pairs_based_class/U54_HFF_plate_subset.txt';
 table = readtable(filename,"Format","%s%d%d%s%s");
 table.Properties.VariableNames = {'chrom','pos1','pos2','str1','str2'};
 % check to see how it looks like
@@ -78,6 +81,13 @@ m.GridVisible = 0
 dlmwrite('hff_chr19_binned.txt',heatmap_mat)
 writematrix('hff_chr19_binned.txt',heatmap_mat)
 
+
+% THE ACTUAL CONTENT OF THIS WORKSHOP STARTS HERE
+% IT'S ALL ABOUT EXTRACTING "CHECKERBOARD" PATTERN IN AN "INTERESTING" WAY:
+
+% INPUT MATRIX HERE CAN BE REPLACED TO ANY BETTER EXAMPLE, INCLUDING SOMETHING
+% BALANCED AND/OR HUMAN-CONSTRUCTED ONE.
+
 % we can read this matrix from file
 heatmap_mat = dlmread('hff_chr19_binned.txt')
 heatmap_mat = readmatrix('hff_chr19_binned.txt')
@@ -95,7 +105,7 @@ heatmap_mat = readmatrix('hff_chr19_binned.txt')
 % distance decay of the contact probability
 
 [nrows, ncols] = size(heatmap_mat);
-% what that should by equal to BTW ?
+% what that should be equal to BTW ?
 
 % Create the expected matrix by taking the means of the diagonals
 mean_list=zeros(num_bins,1);
@@ -148,6 +158,8 @@ h = heatmap(correlation_matrix_pre,  'Colormap', jet,'ColorScaling','log');
 % colorbar
 h.GridVisible = 'off'
  
+% now the "main thing" find boundaries of compartments using
+% edge detection:
 imshow(correlation_matrix_pre);
 edge_image = edge(correlation_matrix_pre, 'canny');
 imshow(edge_image);
@@ -157,9 +169,9 @@ edge_sums = sum(transpose(edge_image));
 plot(edge_sums);
 
 
-%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%
 % discuss homework - fake Hi-C data ...
-%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%
 vvv = [1,1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1,1,1,1,1,1,1,1,1,1,1,-1,-1,-1,-1,-1,-1]
 heatmap(transpose(vvv) * vvv)
 
